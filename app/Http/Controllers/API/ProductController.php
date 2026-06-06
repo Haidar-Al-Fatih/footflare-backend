@@ -10,14 +10,34 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        // Mengambil semua data produk dari database
-        $products = Product::all();
+        try {
+            $query = Product::query();
 
-        // Mengembalikan response dalam bentuk JSON standar API
-        return response()->json([
-            'success' => true,
-            'message' => 'Daftar data produk FootFlare berhasil diambil',
-            'data' => $products
-        ], 200);
+            // Filter Berdasarkan category_id jika dikirim dari Flutter
+            if ($request->has('category_id')) {
+                $query->where('category_id', $request->category_id);
+            }
+
+            // Filter Berdasarkan brand_id jika dikirim dari Flutter
+            if ($request->has('brand_id')) {
+                $query->where('brand_id', $request->brand_id);
+            }
+
+            // Mengambil produk terbaru dari database
+            $products = $query->latest()->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Daftar produk berhasil diambil.',
+                'data' => $products
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data produk.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
