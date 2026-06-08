@@ -8,6 +8,12 @@
 </head>
 <body class="bg-light">
 
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{{ route('admin.products.index') }}">FOOTFLARE <span class="text-warning">ADMIN</span></a>
+        </div>
+    </nav>
+
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold text-dark">Daftar Produk FootFlare</h2>

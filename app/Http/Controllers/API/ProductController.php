@@ -11,7 +11,8 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Product::query();
+            // Menggunakan eager loading 'with' agar relasi brand dan category ikut terbawa ke API Flutter
+            $query = Product::with(['brand', 'category']);
 
             // Filter Berdasarkan category_id jika dikirim dari Flutter
             if ($request->has('category_id')) {
@@ -23,7 +24,7 @@ class ProductController extends Controller
                 $query->where('brand_id', $request->brand_id);
             }
 
-            // Mengambil produk terbaru dari database
+            // Mengambil produk terbaru dari database beserta relasinya
             $products = $query->latest()->get();
 
             return response()->json([
