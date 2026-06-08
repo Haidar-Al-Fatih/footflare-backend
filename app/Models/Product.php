@@ -9,8 +9,6 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $table = 'products';
-
     protected $fillable = [
         'name', 
         'brand_id', 
@@ -21,15 +19,19 @@ class Product extends Model
         'description'
     ];
 
-    // Relasi ke Model Brand (Menggunakan full namespace untuk mencegah Class not found)
+    /**
+     * Relasi ke tabel Brand (Satu produk memiliki satu Brand)
+     */
     public function brand()
     {
-        return $this->belongsTo(\App\Models\Brand::class, 'brand_id');
+        return $this->belongsTo(Brand::class, 'brand_id');
     }
 
-    // Relasi ke Model Category
+    /**
+     * Relasi ke tabel Category (Satu produk memiliki satu Category)
+     */
     public function category()
     {
-        return $this->belongsTo(\App\Models\Category::class, 'category_id');
+        return $this->belongsTo(Category::class, 'category_id');
     }
 }

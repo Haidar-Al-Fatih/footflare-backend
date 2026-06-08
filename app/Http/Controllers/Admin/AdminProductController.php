@@ -4,49 +4,53 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Brand;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class AdminProductController extends Controller
 {
+    // 1. HALAMAN DAFTAR PRODUK
     public function index()
     {
-        // Mengambil produk terbaru untuk ditampilkan pada tabel admin
-        $products = Product::latest()->get();
+        $products = Product::with(['brand', 'category'])->latest()->get();
         return view('admin.products.index', compact('products'));
     }
 
+    // 2. HALAMAN FORM TAMBAH PRODUK
     public function create()
     {
-        return view('admin.products.create');
+        $brands = Brand::all();
+        $categories = Category::all();
+        return view('admin.products.create', compact('brands', 'categories'));
     }
 
+    // 3. FUNGSI SIMPAN PRODUK
     public function store(Request $request)
     {
-        // Validasi data input form sesuai dengan tipe data di phpMyAdmin
         $request->validate([
             'name' => 'required|string|max:255',
-            'brand_id' => 'required|integer', // Sesuai kolom brand_id di database
-            'category_id' => 'required|integer', // Sesuai kolom category_id di database
+            'brand_id' => 'required|exists:brands,id',
+            'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric',
-            'discount_percentage' => 'nullable|integer|min:0|max:100', // Sesuai kolom discount_percentage
-            'description' => 'required|string',
-            'thumbnail' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048', // Untuk thumbnail_url
+            'discount_percentage' => 'nullable|integer|min:0|max:100',
+            'thumbnail' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'description' => 'nullable|string',
         ]);
 
-        // 1. Proses upload file gambar fisik ke dalam folder local storage server Laravel
-        $imagePath = $request->file('thumbnail')->store('products', 'public');
+        // Proses simpan gambar
+        $path = $request->file('thumbnail')->store('products', 'public');
 
-        // 2. Simpan data ke database dengan nama kolom yang 100% presisi sesuai gambar image_d69628.png
         Product::create([
+            'name' => $request->name,
             'brand_id' => $request->brand_id,
             'category_id' => $request->category_id,
-            'name' => $request->name,
-            'description' => $request->description,
             'price' => $request->price,
-            'discount_percentage' => $request->discount_percentage ?? 0, // Jika kosong, set jadi 0
-            'thumbnail_url' => 'storage/' . $imagePath, // Mengisi kolom thumbnail_url
+            'discount_percentage' => $request->discount_percentage ?? 0,
+            'thumbnail_url' => $path,
+            'description' => $request->description,
         ]);
 
-        return redirect()->route('admin.products.index')->with('success', 'Produk sepatu baru berhasil disimpan ke database FootFlare!');
+        return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan!');
     }
 }

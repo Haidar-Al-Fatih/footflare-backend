@@ -33,30 +33,30 @@
                 
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Nama Produk Sepatu</label>
-                    <input type="text" name="name" class="form-control" placeholder="Contoh: Swift Glide Sprinter Soles" required>
+                    <input type="text" name="name" class="form-control" placeholder="Contoh: Swift Glide Sprinter Soles" value="{{ old('name') }}" required>
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <!-- Value dropdown berupa ID integer untuk mengisi kolom brand_id -->
                         <label class="form-label fw-semibold">Brand / Merk</label>
                         <select name="brand_id" class="form-select" required>
                             <option value="">-- Pilih Brand --</option>
-                            <option value="1">Nike (ID: 1)</option>
-                            <option value="2">Adidas (ID: 2)</option>
-                            <option value="3">Puma (ID: 3)</option>
-                            <option value="4">Vans (ID: 4)</option>
+                            @foreach($brands as $brand)
+                                <option value="{{ $brand->id }}" {{ old('brand_id') == $brand->id ? 'selected' : '' }}>
+                                    {{ $brand->name }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <!-- Value dropdown berupa ID integer untuk mengisi kolom category_id -->
                         <label class="form-label fw-semibold">Kategori</label>
                         <select name="category_id" class="form-select" required>
                             <option value="">-- Pilih Kategori --</option>
-                            <option value="1">Man (ID: 1)</option>
-                            <option value="2">Woman (ID: 2)</option>
-                            <option value="3">Unisex (ID: 3)</option>
-                            <option value="4">Child (ID: 4)</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -64,22 +64,20 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">Harga Sepatu (USD / Rupiah)</label>
-                        <input type="number" name="price" class="form-control" placeholder="Contoh: 199" required>
+                        <input type="number" name="price" class="form-control" placeholder="Contoh: 199" value="{{ old('price') }}" required>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <!-- Input baru untuk menangani kolom discount_percentage -->
                         <label class="form-label fw-semibold">Diskon (%) - *Opsional</label>
-                        <input type="number" name="discount_percentage" class="form-control" placeholder="Contoh: 30 (Kosongkan jika tidak ada)" min="0" max="100">
+                        <input type="number" name="discount_percentage" class="form-control" placeholder="Contoh: 30" min="0" max="100" value="{{ old('discount_percentage') }}">
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Deskripsi Produk</label>
-                    <textarea name="description" class="form-control" rows="4" placeholder="Tuliskan spesifikasi produk sepatu disini..." required></textarea>
+                    <textarea name="description" class="form-control" rows="4" placeholder="Tuliskan spesifikasi produk sepatu disini..." required>{{ old('description') }}</textarea>
                 </div>
 
                 <div class="mb-4">
-                    <!-- Name input disesuaikan menjadi thumbnail -->
                     <label class="form-label fw-semibold">Unggah File Gambar (Thumbnail)</label>
                     <input type="file" name="thumbnail" class="form-control" accept="image/*" required>
                     <div class="form-text">Gambar ini akan menjadi representasi utama produk di halaman depan Flutter.</div>
